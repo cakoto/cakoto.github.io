@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Gong yf"><title>虚拟化 · 圆环之理</title><meta name="description" content="The Abstraction: The ProcessOS的基本抽象模型：Process。
+
+ Process的定义
+ 机器状态(machine state)
+ 相关API
+ 创建过程
+ 数据结构
+
+定义首先给出一个非正式的定义：进程就是一个运行中的程序。&amp;nbsp;
+要注意的是，在分时系统中，进"><meta name="keywords"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">圆环之理</a></h3><div class="description"><p>读书笔记-日记-生活杂谈</p></div></div></div><ul class="social-links"></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a href="https://www.caicai.me" target="_blank" rel="noopener"> CaiCai </a><span>&</span><a href="https://github.com/Ben02/hexo-theme-Anatole" target="_blank" rel="noopener"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/about">关于</a></li><li><a href="/archives">归档</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>虚拟化</a></h3></div><div class="post-content"><h1 id="The-Abstraction-The-Process"><a href="#The-Abstraction-The-Process" class="headerlink" title="The Abstraction: The Process"></a>The Abstraction: The Process</h1><p>OS的基本抽象模型：Process。</p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Process的定义</li>
+<li><input checked="" disabled="" type="checkbox"> 机器状态(machine state)</li>
+<li><input checked="" disabled="" type="checkbox"> 相关API</li>
+<li><input checked="" disabled="" type="checkbox"> 创建过程</li>
+<li><input checked="" disabled="" type="checkbox"> 数据结构</li>
+</ul>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>首先给出一个非正式的定义：<strong>进程就是一个运行中的程序。</strong>&nbsp;</p>
+<p>要注意的是，在分时系统中，进程是基本运作单位。在早期的Linux中进程是程序的基本执行实体，在现代Linux中，进程不是基本的运行单位，而是线程的容器。</p>
+<p>操作系统通过实现虚拟化CPU来提供存在多个CPU的假象。——时分复用&nbsp;</p>
+<p>实现虚拟化我们就要完成两个方面的内容：</p>
+<ul>
+<li><strong>机制(mechanism)</strong>：实现一种功能的底层方法或协议。如<strong>context switch</strong>，就是一种机制，帮助OS实现暂停一个程序并切换到另一个程序的功能。</li>
+<li><strong>策略(policy)</strong>：这是利用机制来在OS内进行决策的算法。如<strong>scheduling</strong>就是一种决策。</li>
+</ul>
+<h2 id="machine-state"><a href="#machine-state" class="headerlink" title="machine state"></a>machine state</h2><ul>
+<li>内存(地址空间,address space):包括了要执行的指令和程序读写所需的data.</li>
+<li>寄存器(register):有通用寄存器和特殊寄存器。如Program Counter,Stack Counter, Frame Counter.</li>
+<li>I/O information:包括进程开启的文件列表。</li>
+</ul>
+<h2 id="相关API"><a href="#相关API" class="headerlink" title="相关API"></a>相关API</h2><ul>
+<li>create: 创建新进程</li>
+<li>destroy: 强制终止进程</li>
+<li>wait: 等待其他进程运行结束</li>
+<li>miscellaneous control:杀死或等待以外的控制方式。如挂起</li>
+<li>status: 获取进程相关状态信息</li>
+</ul>
+<h2 id="创建过程"><a href="#创建过程" class="headerlink" title="创建过程"></a>创建过程</h2><p>进程的创建过程：</p>
+<ol>
+<li><p>将代码或程序静态数据从外存读入内存中</p>
+<ul>
+<li>此时有两种加载策略：<ul>
+<li>积极加载(eager load)：常见于早期系统中，将所有的代码和数据在运行前全部装入内存中。</li>
+<li>懒惰加载(lazy load)：现代系统中常使用，用到对应代码时才进行加载。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>创建和初始化堆栈</p>
+<ul>
+<li>对程序运行的栈进行分配内存并初始化。(将argc和argv放进去)</li>
+<li>为程序的堆分配内存。堆用于动态分配内存,<code>malloc()</code>,<code>free()</code></li>
+</ul>
+</li>
+</ol>
+<ol start="3">
+<li>其他初始化(I/O)</li>
+<li>跳转到<code>main()</code>函数的起始点，将CPU的控制前交给新进程。</li>
+</ol>
+<p>进程的状态模型：</p>
+<ul>
+<li>运行态(running)：进程正在运行，正在执行指令</li>
+<li>就绪态(ready)：进程已经准备好执行了，但是时间片没有轮到，所以出于就绪态</li>
+<li>阻塞态(blocked)：进程执行了一些操作导致它不能继续运行，完成这些操作后才能回到就绪态，如需要进行I/O请求时</li>
+</ul>
+<p><img src="https://i.imgur.com/qxvqZga.png" alt="进程状态"></p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>xv6 kernel code:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; the registers xv6 will save and restore</span><br><span class="line">&#x2F;&#x2F; to stop and subsequently restart a process</span><br><span class="line">&#x2F;&#x2F;上下文参数</span><br><span class="line">struct context &#123;</span><br><span class="line">	int eip;</span><br><span class="line">	int esp;</span><br><span class="line">	int ebx;</span><br><span class="line">	int ecx;</span><br><span class="line">	int edx;</span><br><span class="line">    int esi;</span><br><span class="line">    int edi;</span><br><span class="line">    int ebp;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; the different states a process can be in</span><br><span class="line">&#x2F;&#x2F;进程的几种状态</span><br><span class="line">enum proc_state &#123; UNUSED, EMBRYO, SLEEPING,</span><br><span class="line">        	      RUNNABLE, RUNNING, ZOMBIE &#125;;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; the information xv6 tracks about each process</span><br><span class="line">&#x2F;&#x2F; including its register context and state</span><br><span class="line">&#x2F;&#x2F;进程的机器状态</span><br><span class="line">struct proc &#123;</span><br><span class="line">    char *mem;                  &#x2F;&#x2F; Start of process memory</span><br><span class="line">    uint sz;                    &#x2F;&#x2F; Size of process memory</span><br><span class="line">    char *kstack;               &#x2F;&#x2F; Bottom of kernel stack</span><br><span class="line">                                &#x2F;&#x2F; for this process</span><br><span class="line">    enum proc_state state;      &#x2F;&#x2F; Process state</span><br><span class="line">    int pid;                    &#x2F;&#x2F; Process ID</span><br><span class="line">    struct proc *parent;        &#x2F;&#x2F; Parent process</span><br><span class="line">    void *chan;                 &#x2F;&#x2F; If non-zero, sleeping on chan</span><br><span class="line">    int killed;                 &#x2F;&#x2F; If non-zero, have been killed</span><br><span class="line">    struct file *ofile[NOFILE]; &#x2F;&#x2F; Open files</span><br><span class="line">    struct inode *cwd;          &#x2F;&#x2F; Current directory</span><br><span class="line">    struct context context;     &#x2F;&#x2F; Switch here to run process</span><br><span class="line">    struct trapframe *tf;       &#x2F;&#x2F; Trap frame for the</span><br><span class="line">                                &#x2F;&#x2F; current interrupt</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2020-01-10</span><i class="fa fa-tag"></i><a class="tag" href="/tags/虚拟化/" title="虚拟化">虚拟化 </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,http://yoursite.com/2020/01/10/虚拟化/,圆环之理,虚拟化,;" target="_blank" rel="noopener"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a class="btn" role="navigation" href="/2020/01/11/hello-world/" title="Hello World">上一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
